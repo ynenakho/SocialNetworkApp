@@ -1,28 +1,32 @@
 import React, { Component } from "react";
+import { Field, reduxForm, SubmissionError } from "redux-form";
+
+import classnames from "classnames";
 
 class Login extends Component {
-  state = {
-    email: "",
-    password: "",
-    errors: {}
+  onSubmit = formValues => {
+    console.log(formValues);
   };
 
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  onSubmit = e => {
-    e.preventDefault();
-
-    const logingInUser = {
-      email: this.state.email,
-      password: this.state.password
-    };
-
-    console.log(logingInUser);
-  };
+  renderField = ({ input, label, type, meta: { touched, error } }) => (
+    <div>
+      <input
+        className={classnames("form-control form-control-lg", {
+          "is-invalid": error && touched
+          // "is-valid": !error && touched
+        })}
+        {...input}
+        placeholder={label}
+        type={type}
+        autoComplete="off"
+      />
+      {touched && error && <span className="invalid-feedback">{error}</span>}
+    </div>
+  );
 
   render() {
+    const { handleSubmit, submitting, error } = this.props;
+
     return (
       <div className="login">
         <div className="container">
@@ -32,28 +36,30 @@ class Login extends Component {
               <p className="lead text-center">
                 Sign in to your DevConnector account
               </p>
-              <form onSubmit={this.onSubmit}>
+              <form onSubmit={handleSubmit(this.onSubmit)}>
                 <div className="form-group">
-                  <input
-                    type="email"
-                    className="form-control form-control-lg"
-                    placeholder="Email Address"
+                  <Field
                     name="email"
-                    value={this.state.email}
-                    onChange={this.onChange}
+                    type="text"
+                    component={this.renderField}
+                    label="Email Address"
                   />
                 </div>
                 <div className="form-group">
-                  <input
-                    type="password"
-                    className="form-control form-control-lg"
-                    placeholder="Password"
+                  <Field
                     name="password"
-                    value={this.state.password}
-                    onChange={this.onChange}
+                    type="password"
+                    component={this.renderField}
+                    label="Password"
                   />
                 </div>
-                <input type="submit" className="btn btn-info btn-block mt-4" />
+                <button
+                  disabled={submitting}
+                  type="submit"
+                  className="btn btn-info btn-block mt-4"
+                >
+                  Submit
+                </button>
               </form>
             </div>
           </div>
@@ -63,4 +69,21 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const validate = ({ email, password }) => {
+  const errors = {};
+
+  if (!email) {
+    errors.email = "Required";
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+    errors.email = "Invalid email address";
+  }
+  if (!password) {
+    errors.password = "Required";
+  }
+  return errors;
+};
+
+export default reduxForm({
+  form: "loginForm",
+  validate
+})(Login);

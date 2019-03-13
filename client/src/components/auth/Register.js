@@ -1,41 +1,43 @@
 import React, { Component } from "react";
-import axios from "axios";
+import { Field, reduxForm, SubmissionError } from "redux-form";
+
 import classnames from "classnames";
+import axios from "axios";
 
 class Register extends Component {
-  constructor() {
-    super();
-    this.state = {
-      name: "",
-      email: "",
-      password: "",
-      password2: "",
-      errors: {}
-    };
-  }
-
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  onSubmit = e => {
-    e.preventDefault();
-
-    const newUser = {
-      name: this.state.name,
-      email: this.state.email,
-      password: this.state.password,
-      password2: this.state.password2
-    };
-
-    axios
-      .post("/api/users/register", newUser)
+  onSubmit = formValues => {
+    return axios
+      .post("/api/users/register", formValues)
       .then(res => console.log(res.data))
-      .catch(err => this.setState({ errors: err.response.data }));
+      .catch(err => {
+        console.log(err.response.data);
+        if (err.response.data.email) {
+          throw new SubmissionError({
+            email: err.response.data.email,
+            _error: "Registration failed!"
+          });
+        }
+      });
   };
+
+  renderField = ({ input, label, type, meta: { touched, error } }) => (
+    <div>
+      <input
+        className={classnames("form-control form-control-lg", {
+          "is-invalid": error && touched,
+          "is-valid": !error && touched
+        })}
+        {...input}
+        placeholder={label}
+        type={type}
+        autoComplete="off"
+      />
+      {touched && error && <span className="invalid-feedback">{error}</span>}
+    </div>
+  );
 
   render() {
-    const { errors } = this.state;
+    const { handleSubmit, submitting, error } = this.props;
 
     return (
       <div className="register">
@@ -46,72 +48,55 @@ class Register extends Component {
               <p className="lead text-center">
                 Create your DevConnector account
               </p>
-              <form onSubmit={this.onSubmit}>
+              <form onSubmit={handleSubmit(this.onSubmit)}>
                 <div className="form-group">
-                  <input
-                    type="text"
-                    className={classnames("form-control form-control-lg", {
-                      "is-invalid": errors.name
-                    })}
-                    placeholder="Name"
+                  <Field
                     name="name"
-                    value={this.state.name}
-                    onChange={this.onChange}
+                    type="text"
+                    component={this.renderField}
+                    label="Name"
                   />
-                  {errors.name && (
-                    <div className="invalid-feedback">{errors.name}</div>
-                  )}
                 </div>
                 <div className="form-group">
-                  <input
-                    type="email"
-                    className={classnames("form-control form-control-lg", {
-                      "is-invalid": errors.email
-                    })}
-                    placeholder="Email Address"
+                  <Field
                     name="email"
-                    value={this.state.email}
-                    onChange={this.onChange}
+                    type="text"
+                    component={this.renderField}
+                    label="Email Address"
                   />
-                  {errors.email && (
-                    <div className="invalid-feedback">{errors.email}</div>
-                  )}
                   <small className="form-text text-muted">
                     This site uses Gravatar so if you want a profile image, use
                     a Gravatar email
                   </small>
                 </div>
                 <div className="form-group">
-                  <input
-                    type="password"
-                    className={classnames("form-control form-control-lg", {
-                      "is-invalid": errors.password
-                    })}
-                    placeholder="Password"
+                  <Field
                     name="password"
-                    value={this.state.password}
-                    onChange={this.onChange}
+                    type="password"
+                    component={this.renderField}
+                    label="Password"
                   />
-                  {errors.password && (
-                    <div className="invalid-feedback">{errors.password}</div>
-                  )}
                 </div>
                 <div className="form-group">
-                  <input
-                    type="password"
-                    className={classnames("form-control form-control-lg", {
-                      "is-invalid": errors.password2
-                    })}
-                    placeholder="Confirm Password"
+                  <Field
                     name="password2"
-                    value={this.state.password2}
-                    onChange={this.onChange}
+                    type="password"
+                    component={this.renderField}
+                    label="Confirm Password"
                   />
-                  {errors.password2 && (
-                    <div className="invalid-feedback">{errors.password2}</div>
-                  )}
                 </div>
-                <input type="submit" className="btn btn-info btn-block mt-4" />
+                {error && (
+                  <div className="alert alert-danger w-100 text-center">
+                    {error}
+                  </div>
+                )}
+                <button
+                  disabled={submitting}
+                  type="submit"
+                  className="btn btn-info btn-block mt-4"
+                >
+                  Submit
+                </button>
               </form>
             </div>
           </div>
@@ -120,4 +105,34 @@ class Register extends Component {
     );
   }
 }
-export default Register;
+
+const validate = ({ name, email, password, password2 }) => {
+  const errors = {};
+
+  if (!name) {
+    errors.name = "Required";
+  } else if (name.length > 15 || name.length < 4) {
+    errors.name = "Must be between 4 and 15 characters";
+  }
+  if (!email) {
+    errors.email = "Required";
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+    errors.email = "Invalid email address";
+  }
+  if (!password) {
+    errors.password = "Required";
+  } else if (password.length < 6 || password.length > 30) {
+    errors.password = "Must be between 6 and 30 characters";
+  }
+  if (!password2) {
+    errors.password2 = "Required";
+  } else if (password !== password2) {
+    errors.password2 = "Passwords must match";
+  }
+  return errors;
+};
+
+export default reduxForm({
+  form: "registerForm",
+  validate
+})(Register);

@@ -1,25 +1,25 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
+import { loginUser } from "../../actions/authActions";
+import LoginForm from "./LoginForm";
 
 class Login extends Component {
-  state = {
-    email: "",
-    password: "",
-    errors: {}
-  };
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+  }
 
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+  }
 
-  onSubmit = e => {
-    e.preventDefault();
-
-    const logingInUser = {
-      email: this.state.email,
-      password: this.state.password
-    };
-
-    console.log(logingInUser);
+  onSubmit = async formValues => {
+    await this.props.loginUser(formValues);
   };
 
   render() {
@@ -32,29 +32,7 @@ class Login extends Component {
               <p className="lead text-center">
                 Sign in to your DevConnector account
               </p>
-              <form onSubmit={this.onSubmit}>
-                <div className="form-group">
-                  <input
-                    type="email"
-                    className="form-control form-control-lg"
-                    placeholder="Email Address"
-                    name="email"
-                    value={this.state.email}
-                    onChange={this.onChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    type="password"
-                    className="form-control form-control-lg"
-                    placeholder="Password"
-                    name="password"
-                    value={this.state.password}
-                    onChange={this.onChange}
-                  />
-                </div>
-                <input type="submit" className="btn btn-info btn-block mt-4" />
-              </form>
+              <LoginForm onSubmit={this.onSubmit} />
             </div>
           </div>
         </div>
@@ -63,4 +41,18 @@ class Login extends Component {
   }
 }
 
-export default Login;
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors
+});
+
+export default connect(
+  mapStateToProps,
+  { loginUser }
+)(Login);

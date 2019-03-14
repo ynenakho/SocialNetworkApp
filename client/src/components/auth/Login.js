@@ -1,32 +1,28 @@
 import React, { Component } from "react";
-import { Field, reduxForm, SubmissionError } from "redux-form";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import classnames from "classnames";
+import { loginUser } from "../../actions/authActions";
+import LoginForm from "./LoginForm";
 
 class Login extends Component {
-  onSubmit = formValues => {
-    console.log(formValues);
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+  }
+
+  onSubmit = async formValues => {
+    await this.props.loginUser(formValues);
   };
 
-  renderField = ({ input, label, type, meta: { touched, error } }) => (
-    <div>
-      <input
-        className={classnames("form-control form-control-lg", {
-          "is-invalid": error && touched
-          // "is-valid": !error && touched
-        })}
-        {...input}
-        placeholder={label}
-        type={type}
-        autoComplete="off"
-      />
-      {touched && error && <span className="invalid-feedback">{error}</span>}
-    </div>
-  );
-
   render() {
-    const { handleSubmit, submitting, error } = this.props;
-
     return (
       <div className="login">
         <div className="container">
@@ -36,31 +32,7 @@ class Login extends Component {
               <p className="lead text-center">
                 Sign in to your DevConnector account
               </p>
-              <form onSubmit={handleSubmit(this.onSubmit)}>
-                <div className="form-group">
-                  <Field
-                    name="email"
-                    type="text"
-                    component={this.renderField}
-                    label="Email Address"
-                  />
-                </div>
-                <div className="form-group">
-                  <Field
-                    name="password"
-                    type="password"
-                    component={this.renderField}
-                    label="Password"
-                  />
-                </div>
-                <button
-                  disabled={submitting}
-                  type="submit"
-                  className="btn btn-info btn-block mt-4"
-                >
-                  Submit
-                </button>
-              </form>
+              <LoginForm onSubmit={this.onSubmit} />
             </div>
           </div>
         </div>
@@ -69,21 +41,18 @@ class Login extends Component {
   }
 }
 
-const validate = ({ email, password }) => {
-  const errors = {};
-
-  if (!email) {
-    errors.email = "Required";
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
-    errors.email = "Invalid email address";
-  }
-  if (!password) {
-    errors.password = "Required";
-  }
-  return errors;
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
 };
 
-export default reduxForm({
-  form: "loginForm",
-  validate
-})(Login);
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors
+});
+
+export default connect(
+  mapStateToProps,
+  { loginUser }
+)(Login);

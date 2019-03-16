@@ -27,6 +27,7 @@ export class ProfileHeader extends Component {
                   <span> at {profile.company}</span>
                 )}
               </p>
+
               {isEmpty(profile.location) ? null : <p>{profile.location}</p>}
               <p>
                 {isEmpty(profile.website) ? null : (
@@ -39,55 +40,63 @@ export class ProfileHeader extends Component {
                     <i className="fas fa-globe fa-2x" />
                   </a>
                 )}
-                {isEmpty(profile.social.twitter) ? null : (
-                  <a
-                    className="text-white p-2"
-                    href={`//${profile.social.twitter}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <i className="fab fa-twitter fa-2x" />
-                  </a>
-                )}
-                {isEmpty(profile.social.facebook) ? null : (
-                  <a
-                    className="text-white p-2"
-                    href={`//${profile.social.facebook}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <i className="fab fa-facebook fa-2x" />
-                  </a>
-                )}
-                {isEmpty(profile.social.linkedin) ? null : (
-                  <a
-                    className="text-white p-2"
-                    href={`//${profile.social.linkedin}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <i className="fab fa-linkedin fa-2x" />
-                  </a>
-                )}
-                {isEmpty(profile.social.youtube) ? null : (
-                  <a
-                    className="text-white p-2"
-                    href={`//${profile.social.youtube}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <i className="fab fa-youtube fa-2x" />
-                  </a>
-                )}
-                {isEmpty(profile.social.instagram) ? null : (
-                  <a
-                    className="text-white p-2"
-                    href={`//${profile.social.instagram}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <i className="fab fa-instagram fa-2x" />
-                  </a>
+                {typeof profile.social === "undefined" ? null : (
+                  <>
+                    {isEmpty(profile.social.twitter) ? null : (
+                      <a
+                        className="text-white p-2"
+                        href={`//${profile.social.twitter}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fab fa-twitter fa-2x" />
+                      </a>
+                    )}
+                    {!profile.social &&
+                    isEmpty(profile.social.facebook) ? null : (
+                      <a
+                        className="text-white p-2"
+                        href={`//${profile.social.facebook}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fab fa-facebook fa-2x" />
+                      </a>
+                    )}
+                    {!profile.social &&
+                    isEmpty(profile.social.linkedin) ? null : (
+                      <a
+                        className="text-white p-2"
+                        href={`//${profile.social.linkedin}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fab fa-linkedin fa-2x" />
+                      </a>
+                    )}
+                    {!profile.social &&
+                    isEmpty(profile.social.youtube) ? null : (
+                      <a
+                        className="text-white p-2"
+                        href={`//${profile.social.youtube}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fab fa-youtube fa-2x" />
+                      </a>
+                    )}
+                    {!profile.social &&
+                    isEmpty(profile.social.instagram) ? null : (
+                      <a
+                        className="text-white p-2"
+                        href={`//${profile.social.instagram}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fab fa-instagram fa-2x" />
+                      </a>
+                    )}
+                  </>
                 )}
               </p>
             </div>

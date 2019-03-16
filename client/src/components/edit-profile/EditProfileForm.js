@@ -27,11 +27,11 @@ class CreateProfileForm extends Component {
       if (profile.social) {
         this.props.initialize({
           ...profile,
-          twitter: profile.social.twitter,
-          facebook: profile.social.facebook,
-          youtube: profile.social.youtube,
-          linkedin: profile.social.linkedin,
-          instagram: profile.social.instagram
+          twitter: profile.social.twitter ? profile.social.twitter : "",
+          facebook: profile.social.facebook ? profile.social.facebook : "",
+          youtube: profile.social.youtube ? profile.social.youtube : "",
+          linkedin: profile.social.linkedin ? profile.social.linkedin : "",
+          instagram: profile.social.instagram ? profile.social.instagram : ""
         });
       } else {
         this.props.initialize({
@@ -53,11 +53,11 @@ class CreateProfileForm extends Component {
       if (profile.social) {
         this.props.initialize({
           ...profile,
-          twitter: profile.social.twitter,
-          facebook: profile.social.facebook,
-          youtube: profile.social.youtube,
-          linkedin: profile.social.linkedin,
-          instagram: profile.social.instagram
+          twitter: profile.social.twitter ? profile.social.twitter : "",
+          facebook: profile.social.facebook ? profile.social.facebook : "",
+          youtube: profile.social.youtube ? profile.social.youtube : "",
+          linkedin: profile.social.linkedin ? profile.social.linkedin : "",
+          instagram: profile.social.instagram ? profile.social.instagram : ""
         });
       } else {
         this.props.initialize({

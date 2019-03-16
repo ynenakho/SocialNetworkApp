@@ -20,24 +20,24 @@ class CreateProfileForm extends Component {
       const profile = this.props.profile;
 
       // Bring skills array back to CSV
-      profile.skills = profile.skills.join(",");
+      if (profile.skills && typeof profile.skills === "object") {
+        profile.skills = profile.skills.join(",");
+      }
 
-      // profile.twitter = profile.social.twitter ? profile.social.twitter : "";
-      // profile.facebook = profile.social.facebook ? profile.social.facebook : "";
-      // profile.youtube = profile.social.youtube ? profile.social.youtube : "";
-      // profile.linkedin = profile.social.linkedin ? profile.social.linkedin : "";
-      // profile.instagram = profile.social.instagram
-      //   ? profile.social.instagram
-      //   : "";
-
-      this.props.initialize({
-        ...profile,
-        twitter: profile.social.twitter,
-        facebook: profile.social.facebook,
-        youtube: profile.social.youtube,
-        linkedin: profile.social.linkedin,
-        instagram: profile.social.instagram
-      });
+      if (profile.social) {
+        this.props.initialize({
+          ...profile,
+          twitter: profile.social.twitter,
+          facebook: profile.social.facebook,
+          youtube: profile.social.youtube,
+          linkedin: profile.social.linkedin,
+          instagram: profile.social.instagram
+        });
+      } else {
+        this.props.initialize({
+          ...profile
+        });
+      }
     }
   }
 
@@ -46,24 +46,24 @@ class CreateProfileForm extends Component {
       const profile = nextProps.profile;
 
       // Bring skills array back to CSV
-      profile.skills = profile.skills.join(",");
+      if (profile.skills && typeof profile.skills === "object") {
+        profile.skills = profile.skills.join(",");
+      }
 
-      // profile.twitter = profile.social.twitter ? profile.social.twitter : "";
-      // profile.facebook = profile.social.facebook ? profile.social.facebook : "";
-      // profile.youtube = profile.social.youtube ? profile.social.youtube : "";
-      // profile.linkedin = profile.social.linkedin ? profile.social.linkedin : "";
-      // profile.instagram = profile.social.instagram
-      //   ? profile.social.instagram
-      //   : "";
-
-      this.props.initialize({
-        ...profile,
-        twitter: profile.social.twitter,
-        facebook: profile.social.facebook,
-        youtube: profile.social.youtube,
-        linkedin: profile.social.linkedin,
-        instagram: profile.social.instagram
-      });
+      if (profile.social) {
+        this.props.initialize({
+          ...profile,
+          twitter: profile.social.twitter,
+          facebook: profile.social.facebook,
+          youtube: profile.social.youtube,
+          linkedin: profile.social.linkedin,
+          instagram: profile.social.instagram
+        });
+      } else {
+        this.props.initialize({
+          ...profile
+        });
+      }
     }
   }
 

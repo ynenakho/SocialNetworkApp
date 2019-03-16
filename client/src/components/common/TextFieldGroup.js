@@ -5,14 +5,15 @@ import PropTypes from "prop-types";
 const TextFieldGroup = ({
   name,
   placeholder,
-
-  label,
   input,
   type,
   info,
   disabled,
   meta: { touched, error }
 }) => {
+  if (disabled) {
+    input.value = "";
+  }
   return (
     <div className="form-group">
       <input
@@ -25,7 +26,6 @@ const TextFieldGroup = ({
         autoComplete="off"
         disabled={disabled}
         name={name}
-        label={label}
       />
       {touched && error && <span className="invalid-feedback">{error}</span>}
       {info && <small className="form-text text-muted">{info}</small>}

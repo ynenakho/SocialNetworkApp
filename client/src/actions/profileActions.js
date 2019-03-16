@@ -6,7 +6,8 @@ import {
   PROFILE_LOADING,
   CLEAR_CURRENT_PROFILE,
   GET_ERRORS,
-  SET_CURRENT_USER
+  SET_CURRENT_USER,
+  GET_PROFILES
 } from "./types";
 
 // Get current profile
@@ -28,6 +29,25 @@ export const getCurrentProfile = () => dispatch => {
     );
 };
 
+// Get profile by handle
+export const getProfileByHandle = handle => dispatch => {
+  dispatch(setProfileLoading());
+  axios
+    .get(`/api/profile/handle/${handle}`)
+    .then(res =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: null
+      })
+    );
+};
+
 // Create Profile
 export const createProfile = (profileData, history) => dispatch => {
   return axios
@@ -44,6 +64,97 @@ export const createProfile = (profileData, history) => dispatch => {
           _error: "Profile creation failed!"
         });
       }
+    });
+};
+
+// Add experience
+export const addExperience = (expData, history) => dispatch => {
+  return axios
+    .post("/api/profile/experience", expData)
+    .then(res => history.push("/dashboard"))
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      });
+      if (err.response.data) {
+        throw new SubmissionError({
+          _error: "Adding experience failed!"
+        });
+      }
+    });
+};
+
+// Add education
+export const addEducation = (eduData, history) => dispatch => {
+  return axios
+    .post("/api/profile/education", eduData)
+    .then(res => history.push("/dashboard"))
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      });
+      if (err.response.data) {
+        throw new SubmissionError({
+          _error: "Adding education failed!"
+        });
+      }
+    });
+};
+
+// Delete experience
+export const deleteExperience = expId => dispatch => {
+  axios
+    .delete(`/api/profile/experience/${expId}`)
+    .then(res =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      });
+    });
+};
+
+// Delete education
+export const deleteEducation = expId => dispatch => {
+  axios
+    .delete(`/api/profile/education/${expId}`)
+    .then(res =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      });
+    });
+};
+
+// Get all profiles
+export const getProfiles = () => dispatch => {
+  dispatch(setProfileLoading());
+  axios
+    .get("/api/profile/all")
+    .then(res => {
+      dispatch({
+        type: GET_PROFILES,
+        payload: res.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_PROFILES,
+        payload: null
+      });
     });
 };
 

@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 const TextAreaFieldGroup = ({
   name,
   placeholder,
-  value,
   input,
   info,
   meta: { touched, error }
@@ -20,7 +19,6 @@ const TextAreaFieldGroup = ({
         placeholder={placeholder}
         autoComplete="off"
         name={name}
-        value={value}
       />
       {touched && error && <span className="invalid-feedback">{error}</span>}
       {info && <small className="form-text text-muted">{info}</small>}
@@ -31,7 +29,6 @@ const TextAreaFieldGroup = ({
 TextAreaFieldGroup.propTypes = {
   name: PropTypes.string,
   placeholder: PropTypes.string,
-  value: PropTypes.string,
   info: PropTypes.string
 };
 
